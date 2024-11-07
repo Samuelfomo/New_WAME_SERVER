@@ -5,6 +5,7 @@ const paths = require('../config/paths');
 const {Contact} = require("../lib/class/Contact");
 const R = require(path.join(paths.TOOL_DIR, 'Reply'));
 const W = require(path.join(paths.TOOL_DIR, 'Watcher'));
+const {Lexicon} = require("../lib/class/Lexicon");
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ router.post('/add', async (req, res) => {
             return R.handleError(res, "invalid_email_format", 400);
         }
 
-        const contact = new Contact(lastname, mobile, firstname, whatsapp, email, gender, language, location, qualified, null, guid);
+        const contact = new Contact(lastname, mobile, firstname, whatsapp, email, gender, language, location, qualified, null,guid);
         const entry = await contact.save();
         return R.response(true, entry.toJson(), res, 200);
     } catch (error) {
@@ -78,17 +79,42 @@ router.put('/list', async (req, res) => {
 //     }
 // });
 
+// router.put('/delete', async (req, res) => {
+//     try {
+//         const {guid} = req.body;
+//         if (!guid)
+//             return R.handleError(res, "missing_required_fields", 400);
+//
+//         const contact = new Contact(null, null, null, null, null, null, null, null, false, null, guid);
+//         await contact.delete();
+//         return R.response(true, 'deleted_successfully', res, 200);
+//     } catch (error) {
+//         return R.handleError(res, error.message, 500);
+//     }
+// });
+
 router.put('/delete', async (req, res) => {
     try {
-        const {guid} = req.body;
-        if (!guid)
+        const {guids} = req.body;
+        if (!guids)
             return R.handleError(res, "missing_required_fields", 400);
 
-        const contact = new Contact(null, null, null, null, null, null, null, null, false, null, guid);
-        await contact.delete();
+        for (const guid of guids) {
+            const contact = new Contact(null, null, null, null, null, null, null, null, false, null, guid);
+            await contact.delete();
+        }
         return R.response(true, 'deleted_successfully', res, 200);
     } catch (error) {
         return R.handleError(res, error.message, 500);
+    }
+});
+
+router.get('/list_all', async (req, res) => {
+    try {
+        const entries = await Contact.list();
+        return R.response(true, entries, res, 200);
+    } catch (error) {
+        return R.response(false, error.message, res, 500);
     }
 });
 

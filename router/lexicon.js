@@ -5,21 +5,34 @@ const R = require("../lib/tool/Reply");
 
 const router = express.Router();
 
+
 router.post('/add', async (req, res) => {
     try {
-        const {english, french, portable} = req.body;
-        if (!english || !french || typeof portable === 'undefined' || typeof portable !== 'boolean')
+        const { english, french, portable, guid } = req.body;
+        if (!english || !french || typeof portable === 'undefined' || typeof portable !== 'boolean') {
             return R.handleError(res, "missing_required_fields", 400);
-        const reference = Lexicon.toOpenCamelCase(english);
+        }
 
 
-        const lexicon = new Lexicon( reference, english, french, portable, null, null );
-        const entry = await lexicon.save();
-        return R.response(true, entry.toJson(), res, 200);
+        const truncatedEnglish = english.length > 120 ? english.slice(0, 120) : english;
+        const reference = Lexicon.toOpenCamelCase(truncatedEnglish);
+
+        const lexicon = new Lexicon(reference, truncatedEnglish, french, portable, null, guid);
+
+            let entry;
+            if (guid) {
+                entry = await lexicon.save();
+            } else {
+                entry = await lexicon.save();
+            }
+
+            return R.response(true, entry.toJson(), res, 200);
+
     } catch (error) {
-        return R.handleError(res, error.message, 500)
+        return R.handleError(res, error.message, 500);
     }
 });
+
 router.get('/list_all', async (req, res) => {
     try {
         const entries = await Lexicon.list_all();
@@ -46,20 +59,22 @@ router.put('/list', async (req, res) => {
         return R.handleError(res, error.message, 500)
     }
 });
-
 router.put('/delete', async (req, res) => {
     try {
-        const {guid} = req.body;
-        if (!guid)
+        const {guids} = req.body;
+        if (!guids)
             return R.handleError(res, "missing_required_fields", 400);
 
-        const lexicon = new Lexicon(null, null, null, false, null, guid);
-        await lexicon.delete();
+        for (const guid of guids) {
+            const lexicon = new Lexicon(null, null, null, false, null, guid);
+            await lexicon.delete();
+        }
         return R.response(true, 'deleted_successfully', res, 200);
     } catch (error) {
         return R.handleError(res, error.message, 500);
     }
 });
+
 
 // Middleware to intercept undefined requests
 router.use((req, res) => {
