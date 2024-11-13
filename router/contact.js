@@ -5,7 +5,6 @@ const paths = require('../config/paths');
 const {Contact} = require("../lib/class/Contact");
 const R = require(path.join(paths.TOOL_DIR, 'Reply'));
 const W = require(path.join(paths.TOOL_DIR, 'Watcher'));
-const {Lexicon} = require("../lib/class/Lexicon");
 
 const router = express.Router();
 
