@@ -15,11 +15,13 @@ app.use(express.json());
  */
 const LexiconModel = require(path.join(paths.MDL_DIR, 'LexiconModel'));
 const ContactModel = require(path.join(paths.MDL_DIR, 'ContactModel'));
+const EnterpriseModel = require(path.join(paths.MDL_DIR, 'EnterpriseModel'));
 
 async function main() {
     try {
         await LexiconModel.initialize();
         await ContactModel.initialize();
+        await EnterpriseModel.initialize();
 
         console.log('Application initialized successfully');
     } catch (error) {
@@ -38,9 +40,11 @@ main().then(r => {
      */
     const lexiconRoute = require(path.join(paths.ROUTER, 'lexicon'));
     const contactRoute = require(path.join(paths.ROUTER, 'contact'));
+    const enterpriseRoute = require(path.join(paths.ROUTER, 'enterprise'));
 
     app.use("/lexicon", lexiconRoute);
     app.use("/contact", contactRoute);
+    app.use("/enterprise", enterpriseRoute);
 });
 
 /**
