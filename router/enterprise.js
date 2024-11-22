@@ -29,35 +29,6 @@ router.post('/add', async (req, res) => {
 });
 
 
-// router.put('/list', async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
-//
-//         if (!email || !password) {
-//             return R.handleError(res, W.errorMissingFields, 400);
-//         }
-//
-//
-//         const enterprise = await Enterprise.findEnterpriseByEmail(email);
-//
-//         if (enterprise && password) {
-//             const isPasswordValid = await Enterprise.verifyPassword(password, enterprise.password);
-//             if (!isPasswordValid) {
-//                 return R.handleError(res, 'invalid_password', 401);
-//             }
-//         }
-//
-//         else {
-//             return R.handleError(res, 'user_not_found', 404);
-//         }
-//
-//         return R.response(true, enterprise,'Connexion réussie', res, 200);
-//
-//     } catch (error) {
-//         return R.handleError(res, error.message, 500);
-//     }
-// });
-
 router.put('/list', async (req, res) => {
     try {
         const { email, password } = req.body;
