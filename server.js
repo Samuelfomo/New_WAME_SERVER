@@ -10,18 +10,21 @@ const paths = require('./config/paths');
 app.use(cors());
 app.use(express.json());
 
+
 /**
  * Initialize project tables
  */
 const LexiconModel = require(path.join(paths.MDL_DIR, 'LexiconModel'));
 const ContactModel = require(path.join(paths.MDL_DIR, 'ContactModel'));
 const EnterpriseModel = require(path.join(paths.MDL_DIR, 'EnterpriseModel'));
+const LoginModel = require(path.join(paths.MDL_DIR, 'LoginModel'));
 
 async function main() {
     try {
         await LexiconModel.initialize();
         await ContactModel.initialize();
         await EnterpriseModel.initialize();
+        await LoginModel.initialize();
 
         console.log('Application initialized successfully');
     } catch (error) {
@@ -41,10 +44,12 @@ main().then(r => {
     const lexiconRoute = require(path.join(paths.ROUTER, 'lexicon'));
     const contactRoute = require(path.join(paths.ROUTER, 'contact'));
     const enterpriseRoute = require(path.join(paths.ROUTER, 'enterprise'));
+    const loginRoute = require(path.join(paths.ROUTER, 'login'));
 
     app.use("/lexicon", lexiconRoute);
     app.use("/contact", contactRoute);
     app.use("/enterprise", enterpriseRoute);
+    app.use("/login", loginRoute);
 });
 
 /**
